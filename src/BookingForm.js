@@ -77,6 +77,7 @@ export default function BookingForm() {
 		FORM_FIELDS.reduce((acc, field) => ({ ...acc, [field.id]: '' }), {}),
 	);
 	const [message, setMessage] = useState(null);
+	const [loading, setLoading] = useState(false);
 
 	const handleChange = (e) => {
 		setFormData((prev) => ({
@@ -87,6 +88,8 @@ export default function BookingForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true);
+
 		try {
 			const response = await fetch(
 				'https://faithwin-backend.onrender.com/api/bookings',
@@ -119,18 +122,27 @@ export default function BookingForm() {
 				type: 'error',
 				text: 'An error occurred. Please try again.',
 			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
 		<div className='max-w-md w-full space-y-8 bg-white p-8 rounded-md'>
-			<div className='text-center'>
-				<h2 className='text-2xl font-bold text-gray-700'>
-					Book Your Visit
-				</h2>
-				<p className='mt-2 text-sm text-gray-600'>
-					Transform your look with our expert stylists
-				</p>
+			<div className='flex items-center space-x-2'>
+				<img
+					src='/logo.png'
+					alt=''
+					className='h-[32px]'
+				/>
+				<div>
+					<h2 className='text-2xl font-bold text-gray-700 leading-none'>
+						Book Your Visit
+					</h2>
+					<p className='text-sm text-gray-600'>
+						Transform your look with our expert stylists
+					</p>
+				</div>
 			</div>
 
 			{message && (
@@ -166,8 +178,9 @@ export default function BookingForm() {
 
 				<button
 					type='submit'
+					disabled={loading}
 					className='w-full flex justify-center py-3 px-4 h-[52px] border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-700 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200'>
-					Book Appointment
+					{loading ? 'Booking...' : 'Book Appointment'}
 				</button>
 			</form>
 		</div>
